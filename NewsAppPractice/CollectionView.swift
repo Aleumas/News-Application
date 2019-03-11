@@ -16,6 +16,7 @@ class collectionView: UICollectionViewController, UICollectionViewDelegateFlowLa
     let cellId = "CellId"
     let headerId = "HeaderId"
     var articles: [APIData]? = []
+    var webName: [String]? = []
     let randomArray = ["a","b","c","d","e","f","g","h","i","j"]
     
     override func viewDidLoad() {
@@ -42,7 +43,6 @@ class collectionView: UICollectionViewController, UICollectionViewDelegateFlowLa
         let cellTextTitle = self.articles?[indexPath.item].articleTitle
         let cellTextDiscription = self.articles?[indexPath.item].articleDescription
         let attributedString = NSMutableAttributedString.init(string: cellTextTitle!)
-        print(data)
         if (cellTextTitle?.characters.count)! > 60 {
             let index = cellTextDiscription?.index((cellTextDiscription?.startIndex)!, offsetBy: 60)
             let cellCutDiscription = String((cellTextDiscription?[...index!])!)
@@ -64,10 +64,13 @@ class collectionView: UICollectionViewController, UICollectionViewDelegateFlowLa
 
     }
     
-    @objc func editButtonTapped() {
+    @objc func editButtonTapped(_ sender: UIButton) {
         
-        let url = URL(string: self.data)
-        UIApplication.shared.open(url!)
+        let hitPoint = sender.convert(CGPoint.zero, to: collectionView)
+        if let indexPath = collectionView.indexPathForItem(at: hitPoint) {
+            let url = URL(string: self.webName![indexPath.item])
+            UIApplication.shared.open(url!)
+        }
         
     }
     
@@ -108,6 +111,7 @@ class collectionView: UICollectionViewController, UICollectionViewDelegateFlowLa
                                     article.articleDescription = description
                                     guard let url2 = URL(string: urlToImage) else {return}
                                     self.articles?.append(article)
+                                    self.webName?.append(articleWebsite)
                                     let sessionTwo = URLSession.shared
                                     sessionTwo.dataTask(with: url2 , completionHandler: { (Data, Responce, Error) in
                                         DispatchQueue.main.async { if let Data = Data {
